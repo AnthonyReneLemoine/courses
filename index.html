@@ -1,106 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <base target="_top">
-  <style>
-    :root { --p: #764ba2; }
-    * { box-sizing: border-box; font-family: sans-serif; font-size: 18px; }
-    body { background: #f0f2f5; margin: 0; padding: 0; }
-    
-    .header { background: var(--p); color: white; padding: 25px 15px; text-align: center; }
-    .header h1 { margin: 0; font-size: 24px; }
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste de courses - Firebase</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>🛒 Liste de courses</h1>
+          <p>Version GitHub Pages + Firebase</p>
+        </div>
+        <div class="auth-actions">
+          <p id="user-info" class="user-info">Non connecté</p>
+          <button id="login-btn" class="btn btn-primary" type="button">Se connecter avec Google</button>
+          <button id="logout-btn" class="btn btn-ghost" type="button" hidden>Se déconnecter</button>
+        </div>
+      </header>
 
-    .form { background: white; padding: 20px; border-bottom: 2px solid #ddd; display: flex; flex-direction: column; gap: 15px; }
-    input, select { width: 100%; padding: 15px; border: 2px solid #ccc; border-radius: 8px; font-size: 18px !important; }
-    
-    .btn { padding: 18px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; }
-    .btn-add { background: #28a745; width: 100%; }
-    .btn-del { background: #dc3545; margin: 20px; width: calc(100% - 40px); }
+      <section class="card form-card" aria-label="Ajouter un article">
+        <form id="add-form" class="add-form">
+          <label>
+            <span>Produit</span>
+            <input id="product" type="text" placeholder="Ex: Lait" required maxlength="80" />
+          </label>
 
-    .item { background: white; padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 20px; }
-    .item.done { opacity: 0.5; background: #f9f9f9; }
-    .item.done span { text-decoration: line-through; }
-    
-    .check { width: 35px; height: 35px; flex-shrink: 0; }
-    .info { flex-grow: 1; }
-    .name { font-weight: bold; font-size: 20px; display: block; }
-    .meta { font-size: 14px; color: #666; }
-  </style>
-</head>
-<body>
-  <div class="header"><h1>🛒 Liste Sarzeau</h1></div>
+          <label>
+            <span>Quantité</span>
+            <input id="quantity" type="text" placeholder="Ex: 2" maxlength="30" />
+          </label>
 
-  <div class="form">
-    <input type="text" id="p" placeholder="Produit (ex: Lait)" autocomplete="off">
-    <input type="text" id="q" placeholder="Quantité (ex: 2)" autocomplete="off">
-    <button class="btn btn-add" onclick="add()">AJOUTER À LA LISTE</button>
-  </div>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+      </section>
 
-  <div id="list"></div>
-  <button class="btn btn-del" onclick="clean()">Vider les articles achetés</button>
+      <section class="card list-card" aria-label="Articles">
+        <div class="list-toolbar">
+          <h2>Ma liste</h2>
+          <button id="clear-btn" class="btn btn-danger" type="button">Vider les achetés</button>
+        </div>
+        <p id="status" class="status">Connectez-vous pour charger la liste.</p>
+        <ul id="list" class="shopping-list"></ul>
+      </section>
+    </main>
 
-  <script>
-    function load() {
-      document.getElementById('list').innerHTML = "<p style='padding:20px'>Chargement...</p>";
-      google.script.run.withSuccessHandler(draw).obtenirArticles();
-    }
-
-    function draw(articles) {
-      let html = '';
-      articles.forEach(a => {
-        html += `<div class="item ${a.achete ? 'done' : ''}" onclick="toggle('${a.id}', ${!a.achete})">
-          <input type="checkbox" class="check" ${a.achete ? 'checked' : ''}>
-          <div class="info">
-            <span class="name">${a.produit}</span>
-            <span class="meta">${a.quantite}</span>
-          </div>
-        </div>`;
-      });
-      document.getElementById('list').innerHTML = html || "<p style='padding:20px'>Liste vide</p>";
-    }
-
-    function add() {
-      const prod = document.getElementById('p').value.trim();
-      if(!prod) {
-        alert("Veuillez saisir un produit");
-        document.getElementById('p').focus();
-        return;
-      }
-      
-      google.script.run.withSuccessHandler(() => {
-        document.getElementById('p').value = '';
-        document.getElementById('q').value = '';
-        document.getElementById('p').focus();
-        load();
-      }).ajouterArticle({
-        produit: prod, 
-        quantite: document.getElementById('q').value.trim() || '1'
-      });
-    }
-
-    function toggle(id, state) {
-      google.script.run.withSuccessHandler(load).cocherArticle(id, state);
-    }
-
-    function clean() {
-      if(confirm("Supprimer les articles cochés ?")) {
-        google.script.run.withSuccessHandler(load).viderArticlesAchetes();
-      }
-    }
-
-    // Ajout de la touche Entrée pour valider
-    document.getElementById('p').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') add();
-    });
-    
-    document.getElementById('q').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') add();
-    });
-
-    window.onload = function() {
-      load();
-      document.getElementById('p').focus();
-    };
-  </script>
-</body>
+    <script src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
