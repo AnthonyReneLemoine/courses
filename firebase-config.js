@@ -1,10 +1,10 @@
 // Fichier de démonstration locale.
 // Pour la production, mettez vos vraies valeurs Firebase.
 window.FIREBASE_CONFIG = {
-  apiKey: 'DEMO_KEY',
-  authDomain: 'demo.firebaseapp.com',
-  projectId: 'demo-project',
-  storageBucket: 'demo-project.appspot.com',
-  messagingSenderId: '000000000000',
-  appId: '1:000000000000:web:demo'
+  apiKey: "AIzaSyBQ6oM7sJsuczRlNBeE7i86FygQ_kBTlxU",
+  authDomain: "courses-28e86.firebaseapp.com",
+  projectId: "courses-28e86",
+  storageBucket: "courses-28e86.firebasestorage.app",
+  messagingSenderId: "201148101093",
+  appId: "1:201148101093:web:e2d56fea6eea0d69fbbf0c"
 };
